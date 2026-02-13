@@ -9,6 +9,9 @@ class Settings(BaseSettings):
     # Database
     DATABASE_URL: str = "postgresql://user:password@localhost:5432/thienthulau"
 
+    # Google AI
+    GOOGLE_API_KEY: str = ""
+
     class Config:
         env_file = ".env"
         case_sensitive = True
