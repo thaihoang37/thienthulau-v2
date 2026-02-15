@@ -10,6 +10,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from app.core.config import settings
 from app.prompts.translate_chapter import build_translate_chapter_prompt
 from app.repositories import glossary as glossary_repo
+from app.repositories import chapter as chapter_repo
 from app.schemas.chapter import SentencePair
 
 logger = logging.getLogger(__name__)
@@ -84,11 +85,17 @@ def _parse_translated_sentences(response: str) -> list[str]:
         return []
 
 
+DEFAULT_BOOK_ID = uuid.UUID("34c2aefe-e4a3-4568-8aa6-50fee2017c79")
+
+
 async def translate_chapter(
     session: Session,
     text: str,
     book_id: Optional[uuid.UUID] = None,
-) -> list[SentencePair]:
+    title: Optional[str] = None,
+) -> tuple[list[SentencePair], Optional[uuid.UUID]]:
+    if book_id is None:
+        book_id = DEFAULT_BOOK_ID
     raw_paragraphs = _split_into_paragraphs(text)
 
     logger.info(f"Split into {len(raw_paragraphs)} paragraphs")
@@ -132,4 +139,19 @@ async def translate_chapter(
         for i, raw in enumerate(raw_paragraphs)
     ]
 
-    return sentences
+    # Persist to DB if book_id is provided
+    chapter_id = None
+    if book_id is not None:
+        order = chapter_repo.get_next_order(session, book_id)
+        paragraphs = [s.model_dump() for s in sentences]
+        chapter = chapter_repo.create(
+            session=session,
+            book_id=book_id,
+            order=order,
+            paragraphs=paragraphs,
+            title=title or "Untitled",
+        )
+        chapter_id = chapter.id
+        logger.info(f"Saved chapter {chapter_id} (order={order}) for book {book_id}")
+
+    return sentences, chapter_id
