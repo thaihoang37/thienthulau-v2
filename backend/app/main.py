@@ -1,4 +1,9 @@
+import logging
 from fastapi import FastAPI
+
+# Setup logging
+logging.basicConfig(level=logging.INFO)
+logging.getLogger("app").setLevel(logging.INFO)
 
 from app.core.config import settings
 from app.api.router import api_router

@@ -5,9 +5,8 @@ import uuid
 from typing import Optional
 
 from sqlmodel import Session
-from langchain_google_genai import ChatGoogleGenerativeAI
 
-from app.core.config import settings
+from app.core.llm import invoke_with_retry
 from app.prompts.translate_chapter import build_translate_chapter_prompt
 from app.repositories import glossary as glossary_repo
 from app.repositories import chapter as chapter_repo
@@ -135,17 +134,12 @@ async def translate_chapter(
 
     system_prompt = build_translate_chapter_prompt(glossary)
 
-    llm = ChatGoogleGenerativeAI(
-        model="gemini-3-flash-preview",
-        google_api_key=settings.GOOGLE_API_KEY,
-    )
-
     messages = [
         ("system", system_prompt),
         ("human", json.dumps(raw_paragraphs, ensure_ascii=False)),
     ]
 
-    result = await llm.ainvoke(messages)
+    result = await invoke_with_retry(messages)
     text_content = _extract_text_content(result.content)
     parsed = _parse_translation_response(text_content)
 

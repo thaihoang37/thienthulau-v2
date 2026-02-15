@@ -4,9 +4,8 @@ import uuid
 from typing import Optional
 
 from sqlmodel import Session
-from langchain_google_genai import ChatGoogleGenerativeAI
 
-from app.core.config import settings
+from app.core.llm import invoke_with_retry
 from app.prompts.extract_glossary import EXTRACT_GLOSSARY_PROMPT
 from app.repositories import glossary as glossary_repo
 from app.schemas.glossary import GlossaryItemSchema
@@ -65,17 +64,12 @@ async def extract_glossary(
     book_id: Optional[uuid.UUID] = None,
     first_chapter_id: Optional[uuid.UUID] = None,
 ) -> list[GlossaryItemSchema]:
-    llm = ChatGoogleGenerativeAI(
-        model="gemini-3-flash-preview",
-        google_api_key=settings.GOOGLE_API_KEY,
-    )
-
     messages = [
         ("system", EXTRACT_GLOSSARY_PROMPT),
         ("human", f"Chapter raw:\n---\n{text}\n---"),
     ]
 
-    result = await llm.ainvoke(messages)
+    result = await invoke_with_retry(messages)
     text_content = _extract_text_content(result.content)
     extracted_items = _parse_glossary_from_response(text_content)
 
