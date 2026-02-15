@@ -1,0 +1,20 @@
+from pydantic import BaseModel
+from typing import Optional
+from datetime import datetime
+
+
+class BookCreate(BaseModel):
+    title: str
+    author: str
+    cover: Optional[str] = None
+    banner: Optional[str] = None
+
+
+class BookResponse(BaseModel):
+    id: int
+    title: str
+    author: str
+    cover: Optional[str] = None
+    banner: Optional[str] = None
+    created_date: datetime
+    updated_date: datetime

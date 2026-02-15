@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.api.endpoints import glossary, chapter
+from app.api.endpoints import glossary, chapter, book
 
 api_router = APIRouter()
 
@@ -12,3 +12,4 @@ async def health_check():
 
 api_router.include_router(glossary.router)
 api_router.include_router(chapter.router)
+api_router.include_router(book.router)
