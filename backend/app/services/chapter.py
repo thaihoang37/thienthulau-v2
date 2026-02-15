@@ -1,6 +1,7 @@
 import json
 import re
 import logging
+import uuid
 from typing import Optional
 
 from sqlmodel import Session
@@ -86,7 +87,7 @@ def _parse_translated_sentences(response: str) -> list[str]:
 async def translate_chapter(
     session: Session,
     text: str,
-    book_id: Optional[int] = None,
+    book_id: Optional[uuid.UUID] = None,
 ) -> list[SentencePair]:
     raw_paragraphs = _split_into_paragraphs(text)
 

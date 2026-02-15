@@ -1,3 +1,5 @@
+import uuid
+
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
@@ -11,7 +13,7 @@ class BookCreate(BaseModel):
 
 
 class BookResponse(BaseModel):
-    id: int
+    id: uuid.UUID
     title: str
     author: str
     cover: Optional[str] = None

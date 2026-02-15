@@ -1,7 +1,9 @@
+import uuid as uuid_module
 from typing import Optional, List, Any
 
 from sqlmodel import Field, Relationship, Column
-from sqlalchemy import JSON, UniqueConstraint, Index
+from sqlalchemy import JSON, UniqueConstraint, Index, ForeignKey
+from sqlalchemy.dialects.postgresql import UUID
 
 from app.models.base import BaseModelWithTimestamp
 
@@ -13,11 +15,16 @@ class Chapter(BaseModelWithTimestamp, table=True):
         Index("ix_chapters_book_id", "book_id"),
     )
 
-    id: Optional[int] = Field(default=None, primary_key=True)
+    id: uuid_module.UUID = Field(
+        default_factory=uuid_module.uuid4,
+        sa_column=Column(UUID(as_uuid=True), primary_key=True, default=uuid_module.uuid4),
+    )
     title: str
     order: int
     paragraphs: Any = Field(sa_column=Column(JSON, nullable=False))
-    book_id: int = Field(foreign_key="books.id")
+    book_id: uuid_module.UUID = Field(
+        sa_column=Column(UUID(as_uuid=True), ForeignKey("books.id"), nullable=False)
+    )
 
     # Relationships
     book: Optional["Book"] = Relationship(back_populates="chapters")

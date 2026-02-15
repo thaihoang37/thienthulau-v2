@@ -1,6 +1,8 @@
+import uuid as uuid_module
 from typing import Optional, List
 
-from sqlmodel import Field, Relationship
+from sqlmodel import Field, Relationship, Column
+from sqlalchemy.dialects.postgresql import UUID
 
 from app.models.base import BaseModelWithTimestamp
 
@@ -8,7 +10,10 @@ from app.models.base import BaseModelWithTimestamp
 class Book(BaseModelWithTimestamp, table=True):
     __tablename__ = "books"
 
-    id: Optional[int] = Field(default=None, primary_key=True)
+    id: uuid_module.UUID = Field(
+        default_factory=uuid_module.uuid4,
+        sa_column=Column(UUID(as_uuid=True), primary_key=True, default=uuid_module.uuid4),
+    )
     title: str
     author: str
     cover: Optional[str] = None

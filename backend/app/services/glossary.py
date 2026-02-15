@@ -1,5 +1,6 @@
 import json
 import logging
+import uuid
 from typing import Optional
 
 from sqlmodel import Session
@@ -61,8 +62,8 @@ def _parse_glossary_from_response(response: str) -> list[dict]:
 async def extract_glossary(
     session: Session,
     text: str,
-    book_id: Optional[int] = None,
-    first_chapter_id: Optional[int] = None,
+    book_id: Optional[uuid.UUID] = None,
+    first_chapter_id: Optional[uuid.UUID] = None,
 ) -> list[GlossaryItemSchema]:
     llm = ChatGoogleGenerativeAI(
         model="gemini-3-flash-preview",

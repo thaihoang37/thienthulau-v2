@@ -1,7 +1,9 @@
+import uuid as uuid_module
 from typing import Optional
 
-from sqlmodel import Field, Relationship
-from sqlalchemy import UniqueConstraint, Index
+from sqlmodel import Field, Relationship, Column
+from sqlalchemy import UniqueConstraint, Index, ForeignKey
+from sqlalchemy.dialects.postgresql import UUID
 
 from app.models.base import BaseModelWithTimestamp
 
@@ -15,12 +17,21 @@ class Glossary(BaseModelWithTimestamp, table=True):
         Index("ix_glossaries_book_id", "book_id"),
     )
 
-    id: Optional[int] = Field(default=None, primary_key=True)
+    id: uuid_module.UUID = Field(
+        default_factory=uuid_module.uuid4,
+        sa_column=Column(UUID(as_uuid=True), primary_key=True, default=uuid_module.uuid4),
+    )
     raw: str
     translated: str
     type: str
-    book_id: Optional[int] = Field(default=None, foreign_key="books.id")
-    first_chapter_id: Optional[int] = Field(default=None, foreign_key="chapters.id")
+    book_id: Optional[uuid_module.UUID] = Field(
+        default=None,
+        sa_column=Column(UUID(as_uuid=True), ForeignKey("books.id"), nullable=True),
+    )
+    first_chapter_id: Optional[uuid_module.UUID] = Field(
+        default=None,
+        sa_column=Column(UUID(as_uuid=True), ForeignKey("chapters.id"), nullable=True),
+    )
 
     # Relationships
     book: Optional["Book"] = Relationship(back_populates="glossaries")

@@ -1,3 +1,4 @@
+import uuid
 from typing import Optional, Any
 
 from sqlmodel import Session, select, func
@@ -5,7 +6,7 @@ from sqlmodel import Session, select, func
 from app.models.chapter import Chapter
 
 
-def get_next_order(session: Session, book_id: int) -> int:
+def get_next_order(session: Session, book_id: uuid.UUID) -> int:
     statement = select(func.coalesce(func.max(Chapter.order), 0)).where(
         Chapter.book_id == book_id
     )
@@ -15,7 +16,7 @@ def get_next_order(session: Session, book_id: int) -> int:
 
 def create(
     session: Session,
-    book_id: int,
+    book_id: uuid.UUID,
     order: int,
     paragraphs: Any,
     title: str,
@@ -32,10 +33,10 @@ def create(
     return chapter
 
 
-def get_by_id(session: Session, id: int) -> Optional[Chapter]:
+def get_by_id(session: Session, id: uuid.UUID) -> Optional[Chapter]:
     return session.get(Chapter, id)
 
 
-def get_by_book_id(session: Session, book_id: int) -> list[Chapter]:
+def get_by_book_id(session: Session, book_id: uuid.UUID) -> list[Chapter]:
     statement = select(Chapter).where(Chapter.book_id == book_id).order_by(Chapter.order)
     return list(session.exec(statement).all())
