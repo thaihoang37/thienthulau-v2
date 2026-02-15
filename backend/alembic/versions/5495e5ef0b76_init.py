@@ -1,8 +1,8 @@
-"""init tables
+"""init
 
-Revision ID: 12e7533a8a18
+Revision ID: 5495e5ef0b76
 Revises: 
-Create Date: 2026-02-14 00:05:41.741039
+Create Date: 2026-02-15 10:30:48.461948
 
 """
 from typing import Sequence, Union
@@ -13,7 +13,7 @@ import sqlmodel
 
 
 # revision identifiers, used by Alembic.
-revision: str = '12e7533a8a18'
+revision: str = '5495e5ef0b76'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -25,21 +25,23 @@ def upgrade() -> None:
     op.create_table('books',
     sa.Column('created_date', sa.DateTime(), nullable=False),
     sa.Column('updated_date', sa.DateTime(), nullable=False),
-    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('id', sa.UUID(), nullable=False),
     sa.Column('title', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('author', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('cover', sqlmodel.sql.sqltypes.AutoString(), nullable=True),
     sa.Column('banner', sqlmodel.sql.sqltypes.AutoString(), nullable=True),
+    sa.Column('introduce', sqlmodel.sql.sqltypes.AutoString(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('chapters',
     sa.Column('created_date', sa.DateTime(), nullable=False),
     sa.Column('updated_date', sa.DateTime(), nullable=False),
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('title', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
+    sa.Column('id', sa.UUID(), nullable=False),
+    sa.Column('title', sa.JSON(), nullable=False),
     sa.Column('order', sa.Integer(), nullable=False),
+    sa.Column('summary', sqlmodel.sql.sqltypes.AutoString(), nullable=True),
     sa.Column('paragraphs', sa.JSON(), nullable=False),
-    sa.Column('book_id', sa.Integer(), nullable=False),
+    sa.Column('book_id', sa.UUID(), nullable=False),
     sa.ForeignKeyConstraint(['book_id'], ['books.id'], ),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('book_id', 'order', name='uq_chapters_book_id_order')
@@ -48,12 +50,12 @@ def upgrade() -> None:
     op.create_table('glossaries',
     sa.Column('created_date', sa.DateTime(), nullable=False),
     sa.Column('updated_date', sa.DateTime(), nullable=False),
-    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('id', sa.UUID(), nullable=False),
     sa.Column('raw', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('translated', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('type', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
-    sa.Column('book_id', sa.Integer(), nullable=True),
-    sa.Column('first_chapter_id', sa.Integer(), nullable=True),
+    sa.Column('book_id', sa.UUID(), nullable=True),
+    sa.Column('first_chapter_id', sa.UUID(), nullable=True),
     sa.ForeignKeyConstraint(['book_id'], ['books.id'], ),
     sa.ForeignKeyConstraint(['first_chapter_id'], ['chapters.id'], ),
     sa.PrimaryKeyConstraint('id'),

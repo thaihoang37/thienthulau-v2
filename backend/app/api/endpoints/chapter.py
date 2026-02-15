@@ -13,14 +13,15 @@ async def translate_chapter(
     request: TranslateChapterRequest,
     session: Session = Depends(get_session),
 ):
-    sentences, chapter_id, summary = await chapter_service.translate_chapter(
+    result = await chapter_service.translate_chapter(
         session=session,
         text=request.text,
         book_id=request.book_id,
-        title=request.title,
     )
     return TranslateChapterResponse(
-        sentences=sentences,
-        chapter_id=chapter_id,
-        summary=summary,
+        sentences=result["sentences"],
+        chapter_id=result["chapter_id"],
+        title=result["title"],
+        order=result["order"],
+        summary=result["summary"],
     )

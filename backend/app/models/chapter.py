@@ -19,7 +19,7 @@ class Chapter(BaseModelWithTimestamp, table=True):
         default_factory=uuid_module.uuid4,
         sa_column=Column(UUID(as_uuid=True), primary_key=True, default=uuid_module.uuid4),
     )
-    title: str
+    title: Any = Field(sa_column=Column(JSON, nullable=False))
     order: int
     summary: Optional[str] = None
     paragraphs: Any = Field(sa_column=Column(JSON, nullable=False))
