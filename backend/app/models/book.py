@@ -18,6 +18,7 @@ class Book(BaseModelWithTimestamp, table=True):
     author: str
     cover: Optional[str] = None
     banner: Optional[str] = None
+    introduce: Optional[str] = None
 
     # Relationships
     chapters: List["Chapter"] = Relationship(back_populates="book")

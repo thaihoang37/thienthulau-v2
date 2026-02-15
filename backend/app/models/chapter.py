@@ -21,6 +21,7 @@ class Chapter(BaseModelWithTimestamp, table=True):
     )
     title: str
     order: int
+    summary: Optional[str] = None
     paragraphs: Any = Field(sa_column=Column(JSON, nullable=False))
     book_id: uuid_module.UUID = Field(
         sa_column=Column(UUID(as_uuid=True), ForeignKey("books.id"), nullable=False)

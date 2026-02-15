@@ -17,4 +17,5 @@ class SentencePair(BaseModel):
 
 class TranslateChapterResponse(BaseModel):
     chapter_id: Optional[uuid.UUID] = None
+    summary: Optional[str] = None
     sentences: list[SentencePair]

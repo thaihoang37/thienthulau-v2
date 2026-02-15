@@ -20,12 +20,14 @@ def create(
     order: int,
     paragraphs: Any,
     title: str,
+    summary: Optional[str] = None,
 ) -> Chapter:
     chapter = Chapter(
         book_id=book_id,
         order=order,
         paragraphs=paragraphs,
         title=title,
+        summary=summary,
     )
     session.add(chapter)
     session.commit()

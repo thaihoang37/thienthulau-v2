@@ -54,35 +54,61 @@ def _split_into_paragraphs(text: str) -> list[str]:
     return result
 
 
-def _parse_translated_sentences(response: str) -> list[str]:
+def _parse_translation_response(response: str) -> tuple[list[str], Optional[str]]:
+    """Parse LLM response into (translations, summary). Supports both JSON object and array formats."""
     try:
-        start = response.find("[")
-        if start == -1:
-            return []
+        # Try to find JSON object first: {"translations": [...], "summary": "..."}
+        obj_start = response.find("{")
+        if obj_start != -1:
+            depth = 0
+            obj_end = -1
+            for i in range(obj_start, len(response)):
+                if response[i] == "{":
+                    depth += 1
+                elif response[i] == "}":
+                    depth -= 1
+                    if depth == 0:
+                        obj_end = i
+                        break
+
+            if obj_end != -1:
+                json_str = response[obj_start : obj_end + 1]
+                json_str = re.sub(r",\s*]", "]", json_str)
+                json_str = re.sub(r",\s*}", "}", json_str)
+                parsed = json.loads(json_str)
+                if isinstance(parsed, dict):
+                    translations = parsed.get("translations", [])
+                    summary = parsed.get("summary")
+                    if isinstance(translations, list):
+                        return translations, summary
+
+        # Fallback: try to find a plain JSON array
+        arr_start = response.find("[")
+        if arr_start == -1:
+            return [], None
 
         depth = 0
-        end = -1
-        for i in range(start, len(response)):
+        arr_end = -1
+        for i in range(arr_start, len(response)):
             if response[i] == "[":
                 depth += 1
             elif response[i] == "]":
                 depth -= 1
                 if depth == 0:
-                    end = i
+                    arr_end = i
                     break
 
-        if end == -1:
-            return []
+        if arr_end == -1:
+            return [], None
 
-        json_str = response[start : end + 1]
-        json_str = re.sub(r",\s*\]", "]", json_str)
-
+        json_str = response[arr_start : arr_end + 1]
+        json_str = re.sub(r",\s*]", "]", json_str)
         parsed = json.loads(json_str)
-        return parsed if isinstance(parsed, list) else []
+        return (parsed if isinstance(parsed, list) else []), None
     except Exception as e:
-        logger.error(f"Failed to parse translated sentences JSON: {e}")
+        logger.error(f"Failed to parse translation response JSON: {e}")
         logger.error(f"Response preview: {response[:500]}")
-        return []
+        return [], None
 
 
 DEFAULT_BOOK_ID = uuid.UUID("34c2aefe-e4a3-4568-8aa6-50fee2017c79")
@@ -93,7 +119,7 @@ async def translate_chapter(
     text: str,
     book_id: Optional[uuid.UUID] = None,
     title: Optional[str] = None,
-) -> tuple[list[SentencePair], Optional[uuid.UUID]]:
+) -> tuple[list[SentencePair], Optional[uuid.UUID], Optional[str]]:
     if book_id is None:
         book_id = DEFAULT_BOOK_ID
     raw_paragraphs = _split_into_paragraphs(text)
@@ -125,7 +151,7 @@ async def translate_chapter(
 
     result = await llm.ainvoke(messages)
     text_content = _extract_text_content(result.content)
-    translated_paragraphs = _parse_translated_sentences(text_content)
+    translated_paragraphs, summary = _parse_translation_response(text_content)
 
     sentences = [
         SentencePair(
@@ -150,8 +176,9 @@ async def translate_chapter(
             order=order,
             paragraphs=paragraphs,
             title=title or "Untitled",
+            summary=summary,
         )
         chapter_id = chapter.id
         logger.info(f"Saved chapter {chapter_id} (order={order}) for book {book_id}")
 
-    return sentences, chapter_id
+    return sentences, chapter_id, summary

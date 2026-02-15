@@ -10,6 +10,7 @@ class BookCreate(BaseModel):
     author: str
     cover: Optional[str] = None
     banner: Optional[str] = None
+    introduce: Optional[str] = None
 
 
 class BookResponse(BaseModel):
@@ -18,5 +19,6 @@ class BookResponse(BaseModel):
     author: str
     cover: Optional[str] = None
     banner: Optional[str] = None
+    introduce: Optional[str] = None
     created_date: datetime
     updated_date: datetime
