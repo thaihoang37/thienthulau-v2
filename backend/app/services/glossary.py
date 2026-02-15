@@ -8,6 +8,7 @@ from sqlmodel import Session
 from app.core.llm import invoke_with_retry
 from app.prompts.extract_glossary import EXTRACT_GLOSSARY_PROMPT
 from app.repositories import glossary as glossary_repo
+from app.repositories import chapter as chapter_repo
 from app.schemas.glossary import GlossaryItemSchema
 
 logger = logging.getLogger(__name__)
@@ -63,7 +64,14 @@ async def extract_glossary(
     text: str,
     book_id: Optional[uuid.UUID] = None,
     first_chapter_id: Optional[uuid.UUID] = None,
-) -> list[GlossaryItemSchema]:
+) -> dict:
+    # Create a placeholder chapter if book_id is provided and no chapter_id yet
+    chapter_id = first_chapter_id
+    if book_id is not None and chapter_id is None:
+        placeholder = chapter_repo.create_placeholder(session, book_id)
+        chapter_id = placeholder.id
+        logger.info(f"Created placeholder chapter {chapter_id} for book {book_id}")
+
     messages = [
         ("system", EXTRACT_GLOSSARY_PROMPT),
         ("human", f"Chapter raw:\n---\n{text}\n---"),
@@ -74,7 +82,7 @@ async def extract_glossary(
     extracted_items = _parse_glossary_from_response(text_content)
 
     if not extracted_items:
-        return []
+        return {"glossaries": [], "chapter_id": chapter_id}
 
     # Dedup against existing DB records
     raw_values = [item["raw"] for item in extracted_items]
@@ -84,7 +92,7 @@ async def extract_glossary(
     new_items = [item for item in extracted_items if item["raw"] not in existing_raw_set]
 
     if new_items:
-        saved_count = glossary_repo.create_many(session, new_items, book_id, first_chapter_id)
+        saved_count = glossary_repo.create_many(session, new_items, book_id, chapter_id)
         logger.info(f"Saved {saved_count} new glossary items (skipped {len(existing_raw_set)} existing)")
 
     # Combine all glossaries
@@ -95,4 +103,5 @@ async def extract_glossary(
         GlossaryItemSchema(**item) for item in new_items
     ]
 
-    return glossaries
+    return {"glossaries": glossaries, "chapter_id": chapter_id}
+

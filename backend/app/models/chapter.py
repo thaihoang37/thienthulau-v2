@@ -19,10 +19,11 @@ class Chapter(BaseModelWithTimestamp, table=True):
         default_factory=uuid_module.uuid4,
         sa_column=Column(UUID(as_uuid=True), primary_key=True, default=uuid_module.uuid4),
     )
-    title: Any = Field(sa_column=Column(JSON, nullable=False))
-    order: int
+    title: Optional[Any] = Field(default=None, sa_column=Column(JSON, nullable=True))
+    order: Optional[int] = None
     summary: Optional[str] = None
-    paragraphs: Any = Field(sa_column=Column(JSON, nullable=False))
+    paragraphs: Optional[Any] = Field(default=None, sa_column=Column(JSON, nullable=True))
+    status: str = Field(default="pending")  # "pending" | "translated"
     book_id: uuid_module.UUID = Field(
         sa_column=Column(UUID(as_uuid=True), ForeignKey("books.id"), nullable=False)
     )

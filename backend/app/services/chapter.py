@@ -114,6 +114,7 @@ async def translate_chapter(
     session: Session,
     text: str,
     book_id: Optional[uuid.UUID] = None,
+    chapter_id: Optional[uuid.UUID] = None,
 ) -> dict:
     if book_id is None:
         book_id = DEFAULT_BOOK_ID
@@ -172,26 +173,56 @@ async def translate_chapter(
             translated=title_translated or "",
         )
 
-    # Persist to DB if book_id is provided
-    chapter_id = None
+    # Persist to DB
+    result_chapter_id = chapter_id
     if book_id is not None:
         order = order_from_llm if isinstance(order_from_llm, int) and order_from_llm > 0 else chapter_repo.get_next_order(session, book_id)
+        order = order - 6 # Only for TCKV
         paragraphs = [s.model_dump() for s in sentences]
-        chapter = chapter_repo.create(
-            session=session,
-            book_id=book_id,
-            order=order,
-            paragraphs=paragraphs,
-            title=title.model_dump() if title else {"raw": "", "translated": ""},
-            summary=summary,
-        )
-        chapter_id = chapter.id
-        logger.info(f"Saved chapter {chapter_id} (order={order}) for book {book_id}")
+        title_data = title.model_dump() if title else {"raw": "", "translated": ""}
+
+        if chapter_id is not None:
+            # Update existing placeholder chapter
+            chapter = chapter_repo.update_translation(
+                session=session,
+                chapter_id=chapter_id,
+                order=order,
+                paragraphs=paragraphs,
+                title=title_data,
+                summary=summary,
+            )
+            if chapter:
+                result_chapter_id = chapter.id
+                logger.info(f"Updated placeholder chapter {chapter_id} (order={order}) for book {book_id}")
+            else:
+                logger.warning(f"Chapter {chapter_id} not found, creating new one")
+                chapter = chapter_repo.create(
+                    session=session,
+                    book_id=book_id,
+                    order=order,
+                    paragraphs=paragraphs,
+                    title=title_data,
+                    summary=summary,
+                )
+                result_chapter_id = chapter.id
+        else:
+            # Create new chapter (no placeholder)
+            chapter = chapter_repo.create(
+                session=session,
+                book_id=book_id,
+                order=order,
+                paragraphs=paragraphs,
+                title=title_data,
+                summary=summary,
+            )
+            result_chapter_id = chapter.id
+            logger.info(f"Saved chapter {result_chapter_id} (order={order}) for book {book_id}")
 
     return {
         "sentences": sentences,
-        "chapter_id": chapter_id,
+        "chapter_id": result_chapter_id,
         "title": title,
         "order": order_from_llm,
         "summary": summary,
     }
+

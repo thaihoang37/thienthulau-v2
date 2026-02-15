@@ -14,6 +14,38 @@ def get_next_order(session: Session, book_id: uuid.UUID) -> int:
     return max_order + 1
 
 
+def create_placeholder(session: Session, book_id: uuid.UUID) -> Chapter:
+    """Create an empty chapter placeholder for glossary linking."""
+    chapter = Chapter(book_id=book_id, status="pending")
+    session.add(chapter)
+    session.commit()
+    session.refresh(chapter)
+    return chapter
+
+
+def update_translation(
+    session: Session,
+    chapter_id: uuid.UUID,
+    order: int,
+    paragraphs: Any,
+    title: str,
+    summary: Optional[str] = None,
+) -> Optional[Chapter]:
+    """Fill in translation data for an existing placeholder chapter."""
+    chapter = session.get(Chapter, chapter_id)
+    if chapter is None:
+        return None
+    chapter.order = order
+    chapter.paragraphs = paragraphs
+    chapter.title = title
+    chapter.summary = summary
+    chapter.status = "translated"
+    session.add(chapter)
+    session.commit()
+    session.refresh(chapter)
+    return chapter
+
+
 def create(
     session: Session,
     book_id: uuid.UUID,
@@ -28,6 +60,7 @@ def create(
         paragraphs=paragraphs,
         title=title,
         summary=summary,
+        status="translated",
     )
     session.add(chapter)
     session.commit()
@@ -42,3 +75,4 @@ def get_by_id(session: Session, id: uuid.UUID) -> Optional[Chapter]:
 def get_by_book_id(session: Session, book_id: uuid.UUID) -> list[Chapter]:
     statement = select(Chapter).where(Chapter.book_id == book_id).order_by(Chapter.order)
     return list(session.exec(statement).all())
+

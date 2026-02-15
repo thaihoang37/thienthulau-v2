@@ -18,3 +18,5 @@ class GlossaryItemSchema(BaseModel):
 
 class ExtractGlossaryResponse(BaseModel):
     glossaries: list[GlossaryItemSchema]
+    chapter_id: Optional[uuid.UUID] = None
+

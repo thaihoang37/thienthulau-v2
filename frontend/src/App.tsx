@@ -46,21 +46,25 @@ export default function App() {
   const [error, setError] = useState<string>("");
   const [currentStep, setCurrentStep] = useState<"idle" | "extracting" | "translating" | "done">("idle");
 
+  const DEFAULT_BOOK_ID = "7d274da0-2b6e-4571-b575-ffb4227c8181";
+
   const processText = useCallback(async (text: string) => {
     // Extract glossary
     setCurrentStep("extracting");
     setIsExtractingKeywords(true);
     let extractedGlossary: Keyword[] = [];
+    let chapterId: string | null = null;
     try {
       const keywordsResponse = await fetch("/api/glossary/extract", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text }),
+        body: JSON.stringify({ text, book_id: DEFAULT_BOOK_ID }),
       });
 
       if (keywordsResponse.ok) {
         const keywordsData = await keywordsResponse.json();
         extractedGlossary = keywordsData.glossaries || [];
+        chapterId = keywordsData.chapter_id || null;
         setKeywords(extractedGlossary);
       }
     } catch (err) {
@@ -76,7 +80,11 @@ export default function App() {
       const response = await fetch("/api/chapter/translate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text }),
+        body: JSON.stringify({
+          text,
+          book_id: DEFAULT_BOOK_ID,
+          chapter_id: chapterId,
+        }),
       });
 
       if (!response.ok) {

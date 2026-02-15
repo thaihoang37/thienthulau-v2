@@ -7,6 +7,7 @@ from typing import Optional
 class TranslateChapterRequest(BaseModel):
     text: str
     book_id: Optional[uuid.UUID] = None
+    chapter_id: Optional[uuid.UUID] = None
 
 
 class SentencePair(BaseModel):

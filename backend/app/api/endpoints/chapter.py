@@ -17,6 +17,7 @@ async def translate_chapter(
         session=session,
         text=request.text,
         book_id=request.book_id,
+        chapter_id=request.chapter_id,
     )
     return TranslateChapterResponse(
         sentences=result["sentences"],

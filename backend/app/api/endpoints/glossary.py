@@ -13,10 +13,14 @@ async def extract_glossary(
     request: ExtractGlossaryRequest,
     session: Session = Depends(get_session),
 ):
-    glossaries = await glossary_service.extract_glossary(
+    result = await glossary_service.extract_glossary(
         session=session,
         text=request.text,
         book_id=request.book_id,
         first_chapter_id=request.first_chapter_id,
     )
-    return ExtractGlossaryResponse(glossaries=glossaries)
+    return ExtractGlossaryResponse(
+        glossaries=result["glossaries"],
+        chapter_id=result["chapter_id"],
+    )
+
