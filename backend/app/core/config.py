@@ -19,8 +19,8 @@ class Settings(BaseSettings):
     GOOGLE_API_KEY4: str = ""
     GOOGLE_API_KEY5: str = ""
     GOOGLE_API_KEY6: str = ""
-    GOOGLE_API_KEY7: str = ""
-    GOOGLE_API_KEY8: str = ""
+    # GOOGLE_API_KEY7: str = ""
+    # GOOGLE_API_KEY8: str = ""
 
     @property
     def google_api_keys(self) -> list[str]:
@@ -32,8 +32,8 @@ class Settings(BaseSettings):
             self.GOOGLE_API_KEY4,
             self.GOOGLE_API_KEY5,
             self.GOOGLE_API_KEY6,
-            self.GOOGLE_API_KEY7,
-            self.GOOGLE_API_KEY8,
+            # self.GOOGLE_API_KEY7,
+            # self.GOOGLE_API_KEY8,
         ]
         return [k.strip() for k in keys if k.strip()]
 

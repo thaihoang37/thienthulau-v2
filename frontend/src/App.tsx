@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import BatchUpload from "./BatchUpload";
 
 interface Keyword {
   raw: string;
@@ -36,6 +37,7 @@ const typeColors: Record<string, string> = {
 };
 
 export default function App() {
+  const [page, setPage] = useState<"single" | "batch">("single");
   const [rawText, setRawText] = useState<string>("");
   const [sentences, setSentences] = useState<SentencePair[]>([]);
   const [keywords, setKeywords] = useState<Keyword[]>([]);
@@ -47,6 +49,7 @@ export default function App() {
   const [currentStep, setCurrentStep] = useState<"idle" | "extracting" | "translating" | "done">("idle");
 
   const DEFAULT_BOOK_ID = "7d274da0-2b6e-4571-b575-ffb4227c8181";
+
 
   const processText = useCallback(async (text: string) => {
     // Extract glossary
@@ -183,6 +186,10 @@ export default function App() {
     return acc;
   }, {} as Record<string, Keyword[]>);
 
+  if (page === "batch") {
+    return <BatchUpload onBack={() => setPage("single")} />;
+  }
+
   return (
     <main className="min-h-screen p-6 md:p-10">
       {/* Header */}
@@ -193,6 +200,13 @@ export default function App() {
         <p className="text-[var(--text-muted)] text-lg">
           Upload file .txt và để AI dịch truyện cho bạn
         </p>
+        <button
+          onClick={() => setPage("batch")}
+          className="mt-4 px-4 py-2 rounded-xl bg-[var(--surface)] border border-[var(--border)] 
+                     hover:border-[var(--primary)] transition-all cursor-pointer text-sm"
+        >
+          📦 Batch Upload →
+        </button>
       </div>
 
       {/* Upload Zone */}
