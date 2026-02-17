@@ -29,5 +29,16 @@ class TranslateChapterResponse(BaseModel):
 
 
 class ChapterListItem(BaseModel):
+    id: uuid.UUID
     title: Optional[dict] = None
     order: Optional[int] = None
+
+
+class ChapterDetailResponse(BaseModel):
+    id: uuid.UUID
+    title: Optional[str] = None
+    order: Optional[int] = None
+    summary: Optional[str] = None
+    paragraphs: list[str] = []
+    prev_order: Optional[int] = None
+    next_order: Optional[int] = None

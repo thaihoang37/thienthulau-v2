@@ -1,8 +1,14 @@
 import { useState, useEffect, useMemo } from "react";
 
 interface ChapterItem {
+  id?: string;
   title: { raw?: string; translated?: string } | null;
   order: number | null;
+}
+
+interface HomePageProps {
+  onNavigate: (page: "single" | "batch") => void;
+  onChapterClick: (order: number) => void;
 }
 
 const BOOK_ID = "7d274da0-2b6e-4571-b575-ffb4227c8181";
@@ -10,7 +16,7 @@ const PER_PAGE = 20;
 
 const DESCRIPTION = `Trong Hỏa Sơn, Cơ Quan Tiên Cung do bậc tiên hiền đại năng để lại đang khát khao người kế thừa. Người mẹ liều mình tranh đoạt, lấy được Tiên Cung Bảo Ấn, lúc lâm chung phó thác cho Ninh Chuyết. Ngã Phật Tâm Ma Ấn! Độ mình thành Phật, độ người thành Ma. Chưởng ấn giả khẽ khắc tâm ấn, điều khiển cơ quan nhẹ tựa lông hồng. Mọi người ngự trị chúng thì thần mệt ý nặng; Ninh Chuyết lại có thể một tay điều khiển vạn vật, thanh thoát như đang múa. Ninh Chuyết: "Mẹ, nhi tử nhất định không phụ sự ủy thác của Người, đoạt lấy Tiên Cung đó!"`;
 
-export default function HomePage() {
+export default function HomePage({ onChapterClick }: HomePageProps) {
   const [chapters, setChapters] = useState<ChapterItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -202,6 +208,7 @@ export default function HomePage() {
                 return (
                   <div
                     key={ch.order ?? idx}
+                    onClick={() => ch.order != null && onChapterClick(ch.order)}
                     className="flex items-center gap-4 px-5 py-4 rounded-xl bg-[#0a0f1e]/50 border border-blue-500/8 hover:border-blue-500/25 hover:bg-[#0f1528]/60 cursor-pointer transition-all duration-300 group hover:translate-x-1 hover:shadow-lg hover:shadow-blue-500/5"
                   >
                     <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-gradient-to-br from-cyan-500/15 to-blue-500/15 border border-blue-500/20 text-blue-400 text-sm font-bold shrink-0">
@@ -263,7 +270,7 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="relative z-10 border-t border-blue-500/10 bg-[#050510]/80 backdrop-blur-sm">
+      {/* <footer className="relative z-10 border-t border-blue-500/10 bg-[#050510]/80 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col sm:flex-row items-center justify-between text-sm text-slate-600">
           <div className="flex items-center gap-2">
             <img
@@ -278,7 +285,7 @@ export default function HomePage() {
           </div>
           <p className="mt-3 sm:mt-0">© 2025 Thiên Thư Lầu</p>
         </div>
-      </footer>
+      </footer> */}
     </div>
   );
 }

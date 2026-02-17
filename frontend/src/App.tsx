@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import BatchUpload from "./BatchUpload";
 import HomePage from "./HomePage";
+import ReaderPage from "./ReaderPage";
 
 interface Keyword {
   raw: string;
@@ -38,19 +39,24 @@ const typeColors: Record<string, string> = {
 };
 
 export default function App() {
-  const [page, setPage] = useState<"home" | "single" | "batch">("home");
+  const [page, setPage] = useState<"home" | "single" | "batch" | "reader">(
+    "home",
+  );
   const [rawText, setRawText] = useState<string>("");
   const [sentences, setSentences] = useState<SentencePair[]>([]);
   const [keywords, setKeywords] = useState<Keyword[]>([]);
-  const [isExtractingKeywords, setIsExtractingKeywords] = useState<boolean>(false);
+  const [isExtractingKeywords, setIsExtractingKeywords] =
+    useState<boolean>(false);
   const [isTranslating, setIsTranslating] = useState<boolean>(false);
   const [fileName, setFileName] = useState<string>("");
   const [isDragOver, setIsDragOver] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
-  const [currentStep, setCurrentStep] = useState<"idle" | "extracting" | "translating" | "done">("idle");
+  const [currentStep, setCurrentStep] = useState<
+    "idle" | "extracting" | "translating" | "done"
+  >("idle");
+  const [readerChapterOrder, setReaderChapterOrder] = useState<number>(1);
 
   const DEFAULT_BOOK_ID = "7d274da0-2b6e-4571-b575-ffb4227c8181";
-
 
   const processText = useCallback(async (text: string) => {
     // Extract glossary
@@ -107,26 +113,29 @@ export default function App() {
     }
   }, []);
 
-  const handleFileUpload = useCallback(async (file: File) => {
-    if (!file.name.endsWith(".txt")) {
-      setError("Vui lòng chọn file .txt");
-      return;
-    }
+  const handleFileUpload = useCallback(
+    async (file: File) => {
+      if (!file.name.endsWith(".txt")) {
+        setError("Vui lòng chọn file .txt");
+        return;
+      }
 
-    setError("");
-    setFileName(file.name);
+      setError("");
+      setFileName(file.name);
 
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      const text = e.target?.result as string;
-      setRawText(text);
-      setSentences([]);
-      setKeywords([]);
-      await processText(text);
-    };
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const text = e.target?.result as string;
+        setRawText(text);
+        setSentences([]);
+        setKeywords([]);
+        await processText(text);
+      };
 
-    reader.readAsText(file);
-  }, [processText]);
+      reader.readAsText(file);
+    },
+    [processText],
+  );
 
   const handleDrop = useCallback(
     (e: React.DragEvent<HTMLDivElement>) => {
@@ -138,7 +147,7 @@ export default function App() {
         handleFileUpload(file);
       }
     },
-    [handleFileUpload]
+    [handleFileUpload],
   );
 
   const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
@@ -158,7 +167,7 @@ export default function App() {
         handleFileUpload(file);
       }
     },
-    [handleFileUpload]
+    [handleFileUpload],
   );
 
   const handleRetranslate = async () => {
@@ -180,15 +189,37 @@ export default function App() {
   const isLoading = isExtractingKeywords || isTranslating;
 
   // Group keywords by type
-  const groupedKeywords = keywords.reduce((acc, kw) => {
-    const type = kw.type || "other";
-    if (!acc[type]) acc[type] = [];
-    acc[type].push(kw);
-    return acc;
-  }, {} as Record<string, Keyword[]>);
+  const groupedKeywords = keywords.reduce(
+    (acc, kw) => {
+      const type = kw.type || "other";
+      if (!acc[type]) acc[type] = [];
+      acc[type].push(kw);
+      return acc;
+    },
+    {} as Record<string, Keyword[]>,
+  );
 
   if (page === "home") {
-    return <HomePage onNavigate={(p) => setPage(p)} />;
+    return (
+      <HomePage
+        onNavigate={(p) => setPage(p)}
+        onChapterClick={(order) => {
+          setReaderChapterOrder(order);
+          setPage("reader");
+        }}
+      />
+    );
+  }
+
+  if (page === "reader") {
+    return (
+      <ReaderPage
+        bookId={DEFAULT_BOOK_ID}
+        chapterOrder={readerChapterOrder}
+        onBack={() => setPage("home")}
+        onNavigate={(order) => setReaderChapterOrder(order)}
+      />
+    );
   }
 
   if (page === "batch") {
@@ -264,7 +295,7 @@ export default function App() {
             <span>📄</span>
             <span className="text-[var(--text-muted)]">{fileName}</span>
           </div>
-          
+
           {/* Progress Indicator */}
           {isLoading && (
             <div className="glass px-4 py-2 rounded-xl flex items-center gap-2">
@@ -274,11 +305,13 @@ export default function App() {
                 <span></span>
               </div>
               <span className="text-[var(--text-muted)]">
-                {currentStep === "extracting" ? "Đang trích xuất từ khóa..." : "Đang dịch..."}
+                {currentStep === "extracting"
+                  ? "Đang trích xuất từ khóa..."
+                  : "Đang dịch..."}
               </span>
             </div>
           )}
-          
+
           <button
             onClick={handleRetranslate}
             disabled={isLoading}
@@ -352,9 +385,7 @@ export default function App() {
                   <span></span>
                   <span></span>
                 </div>
-                <p className="text-[var(--text-muted)]">
-                  Đang dịch văn bản...
-                </p>
+                <p className="text-[var(--text-muted)]">Đang dịch văn bản...</p>
               </div>
             ) : sentences.length > 0 ? (
               <div className="space-y-4">
@@ -372,7 +403,7 @@ export default function App() {
                         {sentence.raw}
                       </div>
                     </div>
-                    
+
                     {/* Translated sentence */}
                     <div className="flex gap-3">
                       <div className="shrink-0 w-8 h-8 rounded-full bg-green-500/20 text-green-300 flex items-center justify-center text-sm font-semibold">

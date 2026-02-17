@@ -73,17 +73,59 @@ def get_by_id(session: Session, id: uuid.UUID) -> Optional[Chapter]:
 
 
 def get_by_book_id(session: Session, book_id: uuid.UUID) -> list[Chapter]:
-    statement = select(Chapter).where(Chapter.book_id == book_id).order_by(Chapter.order)
+    statement = (
+        select(Chapter).where(Chapter.book_id == book_id).order_by(Chapter.order)
+    )
     return list(session.exec(statement).all())
 
 
 def list_by_book_id(session: Session, book_id: uuid.UUID) -> list[dict]:
-    """Return only title + order for chapter listing (lightweight)."""
+    """Return only id + title + order for chapter listing (lightweight)."""
     statement = (
-        select(Chapter.title, Chapter.order)
+        select(Chapter.id, Chapter.title, Chapter.order)
         .where(Chapter.book_id == book_id, Chapter.status == "translated")
         .order_by(Chapter.order)
     )
     results = session.exec(statement).all()
-    return [{"title": r.title, "order": r.order} for r in results]
+    return [{"id": r.id, "title": r.title, "order": r.order} for r in results]
 
+
+def get_by_book_and_order(
+    session: Session, book_id: uuid.UUID, order: int
+) -> Optional[Chapter]:
+    """Get a chapter by book_id and order number."""
+    statement = select(Chapter).where(
+        Chapter.book_id == book_id,
+        Chapter.order == order,
+        Chapter.status == "translated",
+    )
+    return session.exec(statement).first()
+
+
+def get_adjacent_orders(
+    session: Session, book_id: uuid.UUID, order: int
+) -> tuple[Optional[int], Optional[int]]:
+    """Return (prev_order, next_order) for navigation."""
+    prev_stmt = (
+        select(Chapter.order)
+        .where(
+            Chapter.book_id == book_id,
+            Chapter.order < order,
+            Chapter.status == "translated",
+        )
+        .order_by(Chapter.order.desc())
+        .limit(1)
+    )
+    next_stmt = (
+        select(Chapter.order)
+        .where(
+            Chapter.book_id == book_id,
+            Chapter.order > order,
+            Chapter.status == "translated",
+        )
+        .order_by(Chapter.order)
+        .limit(1)
+    )
+    prev_order = session.exec(prev_stmt).first()
+    next_order = session.exec(next_stmt).first()
+    return prev_order, next_order
