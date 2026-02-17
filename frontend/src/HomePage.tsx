@@ -84,7 +84,7 @@ export default function HomePage({ onChapterClick }: HomePageProps) {
             className="w-18 h-18 sm:w-22 sm:h-22 object-contain"
           />
           <div className="flex flex-col">
-            <span className="text-lg sm:text-xl font-bold tracking-wide bg-gradient-to-r from-cyan-300 via-blue-300 to-indigo-400 bg-clip-text text-transparent leading-tight">
+            <span className="text-lg sm:text-xl font-bold tracking-wide bg-gradient-to-r from-blue-300 via-blue-400 to-blue-500 bg-clip-text text-transparent leading-tight">
               Thiên Thư Lâu
             </span>
           </div>
@@ -94,8 +94,8 @@ export default function HomePage({ onChapterClick }: HomePageProps) {
       {/* Background orbs */}
       <div className="fixed inset-0 -z-10 bg-[#050510]">
         <div className="absolute -top-[200px] -left-[100px] w-[600px] h-[600px] rounded-full bg-[radial-gradient(circle,#0066ff,#003399)] blur-[120px] opacity-15 animate-[orbFloat1_20s_ease-in-out_infinite]" />
-        <div className="absolute -bottom-[150px] -right-[100px] w-[500px] h-[500px] rounded-full bg-[radial-gradient(circle,#00b4d8,#0077b6)] blur-[120px] opacity-15 animate-[orbFloat2_25s_ease-in-out_infinite]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] rounded-full bg-[radial-gradient(circle,#0ea5e9,#0284c7)] blur-[120px] opacity-10" />
+        <div className="absolute -bottom-[150px] -right-[100px] w-[500px] h-[500px] rounded-full bg-[radial-gradient(circle,#3b82f6,#1d4ed8)] blur-[120px] opacity-15 animate-[orbFloat2_25s_ease-in-out_infinite]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] rounded-full bg-[radial-gradient(circle,#60a5fa,#2563eb)] blur-[120px] opacity-10" />
       </div>
 
       {/* Hero Section — Book Info */}
@@ -107,8 +107,8 @@ export default function HomePage({ onChapterClick }: HomePageProps) {
           {/* Cover Image */}
           <div className="shrink-0">
             <div className="relative group">
-              <div className="absolute -inset-3 bg-gradient-to-br from-cyan-500/20 via-blue-500/15 to-indigo-500/20 rounded-2xl blur-2xl group-hover:blur-xl transition-all duration-500 opacity-50 group-hover:opacity-75" />
-              <div className="relative p-0.5 bg-gradient-to-br from-cyan-500/40 via-blue-500/25 to-indigo-500/40 rounded-xl shadow-2xl shadow-blue-500/20">
+              <div className="absolute -inset-3 bg-gradient-to-br from-blue-400/20 via-blue-500/15 to-blue-600/20 rounded-2xl blur-2xl group-hover:blur-xl transition-all duration-500 opacity-50 group-hover:opacity-75" />
+              <div className="relative p-0.5 bg-gradient-to-br from-blue-400/40 via-blue-500/25 to-blue-600/40 rounded-xl shadow-2xl shadow-blue-500/20">
                 <img
                   src="/cover.jpg"
                   alt="Tiên Công Khai Vật"
@@ -120,13 +120,13 @@ export default function HomePage({ onChapterClick }: HomePageProps) {
 
           {/* Text content */}
           <div className="flex-1 min-w-0 space-y-4 text-center sm:text-left">
-            <div className="inline-block px-3 py-1.5 bg-gradient-to-r from-cyan-500/15 to-indigo-500/15 border border-cyan-500/30 rounded-full">
-              <span className="text-xs font-semibold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+            <div className="inline-block px-3 py-1.5 bg-gradient-to-r from-blue-400/15 to-blue-600/15 border border-blue-500/30 rounded-full">
+              <span className="text-xs font-semibold bg-gradient-to-r from-blue-300 to-blue-500 bg-clip-text text-transparent">
                 Tiên Hiệp · Cơ Quan Thuật
               </span>
             </div>
             <h2 className="text-3xl sm:text-4xl font-extrabold leading-tight tracking-tight">
-              <span className="bg-gradient-to-r from-white via-blue-200 to-cyan-300 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-white via-blue-200 to-blue-400 bg-clip-text text-transparent">
                 Tiên Công Khai Vật
               </span>
             </h2>
@@ -141,7 +141,7 @@ export default function HomePage({ onChapterClick }: HomePageProps) {
             {/* Stats */}
             <div className="flex items-center gap-6 pt-2 justify-center sm:justify-start">
               <div className="flex flex-col items-center sm:items-start">
-                <span className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+                <span className="text-2xl font-bold bg-gradient-to-r from-blue-300 to-blue-500 bg-clip-text text-transparent">
                   {chapters.length}
                 </span>
                 <span className="text-[0.7rem] text-slate-500 uppercase tracking-wider">
@@ -150,7 +150,7 @@ export default function HomePage({ onChapterClick }: HomePageProps) {
               </div>
               <div className="w-px h-8 bg-gradient-to-b from-transparent via-blue-500/30 to-transparent" />
               <div className="flex flex-col items-center sm:items-start">
-                <span className="text-lg font-bold bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">
+                <span className="text-lg font-bold bg-gradient-to-r from-blue-300 to-blue-500 bg-clip-text text-transparent">
                   Đang ra
                 </span>
                 <span className="text-[0.7rem] text-slate-500 uppercase tracking-wider">
@@ -169,7 +169,7 @@ export default function HomePage({ onChapterClick }: HomePageProps) {
       >
         <div className="text-center mb-10">
           <h2 className="text-3xl font-bold mb-2">
-            <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-blue-300 to-blue-500 bg-clip-text text-transparent">
               📖 Danh Sách Chương
             </span>
           </h2>
@@ -209,7 +209,7 @@ export default function HomePage({ onChapterClick }: HomePageProps) {
                     onClick={() => ch.order != null && onChapterClick(ch.order)}
                     className="flex items-center gap-4 px-5 py-4 rounded-xl bg-[#0a0f1e]/50 border border-blue-500/8 hover:border-blue-500/25 hover:bg-[#0f1528]/60 cursor-pointer transition-all duration-300 group hover:translate-x-1 hover:shadow-lg hover:shadow-blue-500/5"
                   >
-                    <div className="flex items-center justify-center p-2 rounded-lg bg-gradient-to-br from-cyan-500/15 to-blue-500/15 border border-blue-500/20 text-blue-400 text-sm font-bold shrink-0">
+                    <div className="flex items-center justify-center p-2 rounded-lg bg-gradient-to-br from-blue-400/15 to-blue-600/15 border border-blue-500/20 text-blue-400 text-sm font-bold shrink-0">
                       Chương {ch.order ?? idx + 1}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -246,7 +246,7 @@ export default function HomePage({ onChapterClick }: HomePageProps) {
                       onClick={() => goToPage(p)}
                       className={`w-9 h-9 rounded-lg text-sm font-medium transition-all cursor-pointer ${
                         currentPage === p
-                          ? "bg-gradient-to-r from-blue-600 to-cyan-500 text-white shadow-lg shadow-blue-500/30"
+                          ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/30"
                           : "border border-blue-500/20 text-slate-400 hover:text-slate-200 hover:border-blue-500/40 hover:bg-blue-500/10"
                       }`}
                     >

@@ -109,7 +109,7 @@ export default function ReaderPage({
       {/* Background orbs */}
       <div className="fixed inset-0 -z-10 bg-[#050510]">
         <div className="absolute -top-[200px] -left-[100px] w-[600px] h-[600px] rounded-full bg-[radial-gradient(circle,#0066ff,#003399)] blur-[120px] opacity-10 animate-[orbFloat1_20s_ease-in-out_infinite]" />
-        <div className="absolute -bottom-[150px] -right-[100px] w-[500px] h-[500px] rounded-full bg-[radial-gradient(circle,#00b4d8,#0077b6)] blur-[120px] opacity-10 animate-[orbFloat2_25s_ease-in-out_infinite]" />
+        <div className="absolute -bottom-[150px] -right-[100px] w-[500px] h-[500px] rounded-full bg-[radial-gradient(circle,#3b82f6,#1d4ed8)] blur-[120px] opacity-10 animate-[orbFloat2_25s_ease-in-out_infinite]" />
       </div>
 
       {/* Sticky Header */}
@@ -203,7 +203,7 @@ export default function ReaderPage({
               alt="Logo"
               className="w-5 h-5 object-contain"
             />
-            <span className="font-medium bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+            <span className="font-medium bg-gradient-to-r from-blue-300 to-blue-500 bg-clip-text text-transparent">
               Thiên Thư Lầu
             </span>
           </div>
