@@ -76,3 +76,14 @@ def get_by_book_id(session: Session, book_id: uuid.UUID) -> list[Chapter]:
     statement = select(Chapter).where(Chapter.book_id == book_id).order_by(Chapter.order)
     return list(session.exec(statement).all())
 
+
+def list_by_book_id(session: Session, book_id: uuid.UUID) -> list[dict]:
+    """Return only title + order for chapter listing (lightweight)."""
+    statement = (
+        select(Chapter.title, Chapter.order)
+        .where(Chapter.book_id == book_id, Chapter.status == "translated")
+        .order_by(Chapter.order)
+    )
+    results = session.exec(statement).all()
+    return [{"title": r.title, "order": r.order} for r in results]
+

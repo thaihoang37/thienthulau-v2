@@ -26,3 +26,8 @@ class TranslateChapterResponse(BaseModel):
     order: Optional[int] = None
     summary: Optional[str] = None
     sentences: list[SentencePair]
+
+
+class ChapterListItem(BaseModel):
+    title: Optional[dict] = None
+    order: Optional[int] = None

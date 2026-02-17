@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import BatchUpload from "./BatchUpload";
+import HomePage from "./HomePage";
 
 interface Keyword {
   raw: string;
@@ -37,7 +38,7 @@ const typeColors: Record<string, string> = {
 };
 
 export default function App() {
-  const [page, setPage] = useState<"single" | "batch">("single");
+  const [page, setPage] = useState<"home" | "single" | "batch">("home");
   const [rawText, setRawText] = useState<string>("");
   const [sentences, setSentences] = useState<SentencePair[]>([]);
   const [keywords, setKeywords] = useState<Keyword[]>([]);
@@ -186,8 +187,12 @@ export default function App() {
     return acc;
   }, {} as Record<string, Keyword[]>);
 
+  if (page === "home") {
+    return <HomePage onNavigate={(p) => setPage(p)} />;
+  }
+
   if (page === "batch") {
-    return <BatchUpload onBack={() => setPage("single")} />;
+    return <BatchUpload onBack={() => setPage("home")} />;
   }
 
   return (
@@ -200,13 +205,22 @@ export default function App() {
         <p className="text-[var(--text-muted)] text-lg">
           Upload file .txt và để AI dịch truyện cho bạn
         </p>
-        <button
-          onClick={() => setPage("batch")}
-          className="mt-4 px-4 py-2 rounded-xl bg-[var(--surface)] border border-[var(--border)] 
-                     hover:border-[var(--primary)] transition-all cursor-pointer text-sm"
-        >
-          📦 Batch Upload →
-        </button>
+        <div className="flex gap-3 mt-4">
+          <button
+            onClick={() => setPage("home")}
+            className="px-4 py-2 rounded-xl bg-[var(--surface)] border border-[var(--border)] 
+                       hover:border-[var(--primary)] transition-all cursor-pointer text-sm"
+          >
+            🏠 Trang chủ
+          </button>
+          <button
+            onClick={() => setPage("batch")}
+            className="px-4 py-2 rounded-xl bg-[var(--surface)] border border-[var(--border)] 
+                       hover:border-[var(--primary)] transition-all cursor-pointer text-sm"
+          >
+            📦 Batch Upload →
+          </button>
+        </div>
       </div>
 
       {/* Upload Zone */}
