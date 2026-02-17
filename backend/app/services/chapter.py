@@ -6,7 +6,7 @@ from typing import Optional
 
 from sqlmodel import Session
 
-from app.core.llm import invoke_with_retry
+from app.core.llm import invoke_llm
 from app.prompts.translate_chapter import build_translate_chapter_prompt
 from app.repositories import glossary as glossary_repo
 from app.repositories import chapter as chapter_repo
@@ -140,7 +140,7 @@ async def translate_chapter(
         ("human", json.dumps(raw_paragraphs, ensure_ascii=False)),
     ]
 
-    result = await invoke_with_retry(messages)
+    result = await invoke_llm(messages)
     text_content = _extract_text_content(result.content)
     parsed = _parse_translation_response(text_content)
 
