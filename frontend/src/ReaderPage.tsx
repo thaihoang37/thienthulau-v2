@@ -124,9 +124,7 @@ export default function ReaderPage({
           </button>
           <div className="flex-1 min-w-0 text-center">
             <span className="text-sm font-medium text-slate-300 truncate block">
-              {chapter
-                ? chapter.title || `Chương ${chapter.order}`
-                : "Đang tải..."}
+              Tiên Công Khai Vật
             </span>
           </div>
           {/* Spacer to center title */}
@@ -153,9 +151,7 @@ export default function ReaderPage({
           <article>
             {/* Chapter Title */}
             <h1 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-12 leading-snug">
-              <span className="bg-gradient-to-r from-white via-blue-200 to-cyan-300 bg-clip-text text-transparent">
-                {chapter.title || `Chương ${chapter.order}`}
-              </span>
+              <span>{`Chương ${chapter.order} - ${chapter.title}`}</span>
             </h1>
 
             {/* Paragraphs */}

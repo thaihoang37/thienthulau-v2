@@ -110,7 +110,7 @@ export default function HomePage({ onChapterClick }: HomePageProps) {
               <div className="absolute -inset-3 bg-gradient-to-br from-cyan-500/20 via-blue-500/15 to-indigo-500/20 rounded-2xl blur-2xl group-hover:blur-xl transition-all duration-500 opacity-50 group-hover:opacity-75" />
               <div className="relative p-0.5 bg-gradient-to-br from-cyan-500/40 via-blue-500/25 to-indigo-500/40 rounded-xl shadow-2xl shadow-blue-500/20">
                 <img
-                  src="https://img22.ixdzs.com/d6/1d/d61d50c395ee9513ed17f9519915d41d.jpg"
+                  src="/cover.jpg"
                   alt="Tiên Công Khai Vật"
                   className="w-44 sm:w-52 rounded-xl object-cover aspect-[3/4]"
                 />
@@ -173,9 +173,7 @@ export default function HomePage({ onChapterClick }: HomePageProps) {
               📖 Danh Sách Chương
             </span>
           </h2>
-          <p className="text-slate-500 text-sm">
-            {chapters.length} chương · Mới nhất lên đầu
-          </p>
+          <p className="text-slate-500 text-sm">{chapters.length} chương</p>
         </div>
 
         {loading && (
@@ -211,8 +209,8 @@ export default function HomePage({ onChapterClick }: HomePageProps) {
                     onClick={() => ch.order != null && onChapterClick(ch.order)}
                     className="flex items-center gap-4 px-5 py-4 rounded-xl bg-[#0a0f1e]/50 border border-blue-500/8 hover:border-blue-500/25 hover:bg-[#0f1528]/60 cursor-pointer transition-all duration-300 group hover:translate-x-1 hover:shadow-lg hover:shadow-blue-500/5"
                   >
-                    <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-gradient-to-br from-cyan-500/15 to-blue-500/15 border border-blue-500/20 text-blue-400 text-sm font-bold shrink-0">
-                      {ch.order ?? idx + 1}
+                    <div className="flex items-center justify-center p-2 rounded-lg bg-gradient-to-br from-cyan-500/15 to-blue-500/15 border border-blue-500/20 text-blue-400 text-sm font-bold shrink-0">
+                      Chương {ch.order ?? idx + 1}
                     </div>
                     <div className="flex-1 min-w-0">
                       <span className="text-slate-300 text-[0.95rem] block truncate group-hover:text-slate-100 transition-colors">
