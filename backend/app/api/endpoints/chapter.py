@@ -36,14 +36,17 @@ def get_chapter(
     if chapter is None:
         raise HTTPException(status_code=404, detail="Chapter not found")
 
-    # Extract only translated text from paragraphs
+    # Extract translated and raw text from paragraphs
     translated_paragraphs: list[str] = []
+    raw_paragraphs: list[str] = []
     if chapter.paragraphs:
         for p in chapter.paragraphs:
             if isinstance(p, dict):
                 translated_paragraphs.append(p.get("translated", p.get("raw", "")))
+                raw_paragraphs.append(p.get("raw", ""))
             elif isinstance(p, str):
                 translated_paragraphs.append(p)
+                raw_paragraphs.append(p)
 
     # Get translated title
     title_text = None
@@ -61,6 +64,7 @@ def get_chapter(
         order=chapter.order,
         summary=chapter.summary,
         paragraphs=translated_paragraphs,
+        raw_paragraphs=raw_paragraphs,
         prev_order=prev_order,
         next_order=next_order,
     )

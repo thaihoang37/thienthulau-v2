@@ -40,5 +40,6 @@ class ChapterDetailResponse(BaseModel):
     order: Optional[int] = None
     summary: Optional[str] = None
     paragraphs: list[str] = []
+    raw_paragraphs: list[str] = []
     prev_order: Optional[int] = None
     next_order: Optional[int] = None

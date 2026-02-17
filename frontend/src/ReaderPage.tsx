@@ -13,6 +13,7 @@ interface ChapterDetail {
   order: number | null;
   summary: string | null;
   paragraphs: string[];
+  raw_paragraphs: string[];
   prev_order: number | null;
   next_order: number | null;
 }
@@ -26,6 +27,7 @@ export default function ReaderPage({
   const [chapter, setChapter] = useState<ChapterDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [bilingual, setBilingual] = useState(false);
 
   const fetchChapter = useCallback(
     async (order: number) => {
@@ -127,13 +129,29 @@ export default function ReaderPage({
               Tiên Công Khai Vật
             </span>
           </div>
-          {/* Spacer to center title */}
-          <div className="w-16 shrink-0" />
+          {/* Mode toggle */}
+          <button
+            onClick={() => setBilingual((v) => !v)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer shrink-0 ${
+              bilingual
+                ? "bg-blue-500/20 border border-blue-500/40 text-blue-300"
+                : "border border-white/10 text-slate-400 hover:text-slate-200 hover:border-white/20"
+            }`}
+          >
+            <span>{bilingual ? "双" : "译"}</span>
+            <span className="hidden sm:inline">
+              {bilingual ? "Song ngữ" : "Chỉ dịch"}
+            </span>
+          </button>
         </div>
       </header>
 
       {/* Content */}
-      <main className="max-w-3xl mx-auto px-5 sm:px-8 py-10 sm:py-14">
+      <main
+        className={`mx-auto px-5 sm:px-8 py-10 sm:py-14 transition-all duration-300 ${
+          bilingual ? "max-w-5xl" : "max-w-3xl"
+        }`}
+      >
         {loading && (
           <div className="flex items-center justify-center gap-3 py-24 text-slate-500">
             <div className="w-5 h-5 border-2 border-blue-500/20 border-t-blue-500 rounded-full animate-spin" />
@@ -155,13 +173,34 @@ export default function ReaderPage({
             </h1>
 
             {/* Paragraphs */}
-            <div className="space-y-5 text-[1.05rem] sm:text-lg leading-[1.9] sm:leading-[2] text-slate-300/90 tracking-wide">
-              {chapter.paragraphs.map((text, i) => (
-                <p key={i} className="text-justify indent-8">
-                  {text}
-                </p>
-              ))}
-            </div>
+            {bilingual ? (
+              <div className="space-y-6">
+                {chapter.paragraphs.map((translated, i) => {
+                  const raw = chapter.raw_paragraphs[i] || "";
+                  return (
+                    <div
+                      key={i}
+                      className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 py-4 border-b border-white/[0.04] last:border-b-0"
+                    >
+                      <p className="text-sm sm:text-base leading-[1.8] text-slate-500 font-light">
+                        {raw}
+                      </p>
+                      <p className="text-[1.05rem] sm:text-lg leading-[1.9] text-slate-300/90">
+                        {translated}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="space-y-5 text-[1.05rem] sm:text-lg leading-[1.9] sm:leading-[2] text-slate-300/90 tracking-wide">
+                {chapter.paragraphs.map((text, i) => (
+                  <p key={i} className="text-justify indent-8">
+                    {text}
+                  </p>
+                ))}
+              </div>
+            )}
 
             {/* Chapter Navigation */}
             <nav className="flex items-center justify-between mt-14 sm:mt-20 pt-8 border-t border-white/[0.06]">
